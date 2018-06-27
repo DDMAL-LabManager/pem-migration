@@ -67,9 +67,15 @@ Vagrant.configure("2") do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
+    yum update
     yum install -y vim
     yum install -y php
     yum install -y php-mysql
+    yum install -y wget
+    wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm    
+    rpm -ivh mysql-community-release-el7-5.noarch.rpm
+    # mysql_secure_installation
+    yum install -y mysql-server
   SHELL
 
   config.vm.provision :shell, path: "forward_apache.sh"
