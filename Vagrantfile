@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "pem-centos7"
+  config.vm.box = "pem-centos6"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -29,6 +29,7 @@ Vagrant.configure("2") do |config|
   # via 127.0.0.1 to disable public access
   # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
   config.vm.network "forwarded_port", guest: 80, host: 4567, host_ip: "127.0.0.1"
+  config.vm.network "private_network", type: "dhcp"
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -43,7 +44,7 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+  config.vm.synced_folder ".", "/vagrant", type: "nfs"
   # config.vm.synced_folder "./www/html", "/var/www/html", type: "virtualbox",
   #  owner: "root",
   #  group: "root"
@@ -66,17 +67,20 @@ Vagrant.configure("2") do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  config.vm.provision "shell", inline: <<-SHELL
-    yum update
-    yum install -y vim
-    yum install -y php
-    yum install -y php-mysql
-    yum install -y wget
-    wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm    
-    rpm -ivh mysql-community-release-el7-5.noarch.rpm
-    # mysql_secure_installation
-    yum install -y mysql-server
-  SHELL
+  # config.vm.provision "shell", inline: <<-SHELL
+  #   yum update
+  #   yum install -y vim
+  #   yum install -y wget
+  #   yum install -y epel-release
+  #   wget https://centos6.iuscommunity.org/ius-release.rpm
+  #   rpm -Uvh ius-release.rpm
+  #   yum --enablerepo=ius-archive install php53u
+  #   wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm    
+  #   rpm -ivh mysql-community-release-el7-5.noarch.rpm
+  #   # mysql_secure_installation
+  #   yum install -y mysql-server
+  # SHELL
 
+  # config.vm.provision :shell, path: "install_dependencies.sh"
   config.vm.provision :shell, path: "forward_apache.sh"
 end
